@@ -1,0 +1,41 @@
+{
+    "7d1a9c5e8f2b4d3a7c0e1fa2": {
+        "itemTplToClone": "5755356824597772cb798962",
+        "parentId": "5448f39d4bdc2d0a728b4568",
+        "handbookParentId": "5b47574386f77428ca22b338",
+        "overrideProperties": {
+            "MaxHpResource": 200,
+            "ExaminedByDefault": true,
+            "BackgroundColor": "violet",
+            "CanSellOnRagfair": true,
+			"Prefab": {
+			  "path": "manimal/ai2_blue.bundle",
+			  "rcid": ""
+		    },
+		    "UsePrefab": {
+			  "path": "manimal/ai2_blue_container.bundle",
+			  "rcid": ""
+		    }
+        },
+        "locales": {
+            "en": {
+                "name": "Super AI-2 medkit",
+                "shortName": "SAI-2",
+                "description": "An upgraded AI-2 with 200 HP of healing capacity."
+            }
+        },
+        "addtoInventorySlots": [],
+        "addtoModSlots": false,
+        "modSlot": [],
+        "fleaPriceRoubles": 25000,
+        "handbookPriceRoubles": 25000,
+        "addtoBots": false,
+        "addtoStaticLootContainers": false,
+        "staticLootContainers": [],
+        "addLooseLoot": false,
+        "addLooseLootProbability": 0,
+        "addtoHallOfFame": false,
+        "hallOfFameSlots": [],
+        "addtoStatuetteSlots": false
+    }
+}

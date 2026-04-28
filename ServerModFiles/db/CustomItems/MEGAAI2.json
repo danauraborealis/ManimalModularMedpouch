@@ -1,0 +1,42 @@
+{
+    "69eff94e0842b5b5bbd1fd4d": {
+        "itemTplToClone": "5755356824597772cb798962",
+        "parentId": "5448f39d4bdc2d0a728b4568",
+        "handbookParentId": "5b47574386f77428ca22b338",
+        "overrideProperties": {
+            "MaxHpResource": 300,
+            "ExaminedByDefault": true,
+            "BackgroundColor": "red",
+            "CanSellOnRagfair": true,
+			"Prefab": {
+			  "path": "manimal/ai2_green.bundle",
+			  "rcid": ""
+		    },
+		    "UsePrefab": {
+			  "path": "manimal/ai2_green_container.bundle",
+			  "rcid": ""
+		    }
+        },
+        "locales": {
+            "en": {
+                "name": "MEGA AI-2 medkit",
+                "shortName": "MAI-2",
+                "description": "An upgraded AI-2 with 300 HP of healing capacity."
+            }
+        },
+        "addtoInventorySlots": [],
+		"addtoItemBlacklist": true,
+        "addtoModSlots": false,
+        "modSlot": [],
+        "fleaPriceRoubles": 60000,
+        "handbookPriceRoubles": 60000,
+        "addtoBots": false,
+        "addtoStaticLootContainers": false,
+        "staticLootContainers": [],
+        "addLooseLoot": false,
+        "addLooseLootProbability": 0,
+        "addtoHallOfFame": false,
+        "hallOfFameSlots": [],
+        "addtoStatuetteSlots": false
+    }
+}

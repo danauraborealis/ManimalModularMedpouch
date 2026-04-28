@@ -1,0 +1,48 @@
+{
+  "manifest": [
+  {
+            "key": "manimal/ai2_blue.bundle",
+            "dependencyKeys": [
+                "shaders",
+                "cubemaps",
+                "assets/commonassets/physics/physicsmaterials.bundle"
+            ]
+  },
+  {
+            "key": "manimal/ai2_green.bundle",
+            "dependencyKeys": [
+                "shaders",
+                "cubemaps",
+                "assets/commonassets/physics/physicsmaterials.bundle"
+            ]
+  },
+  {
+      "key": "manimal/ai2_blue_container.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle",
+        "assets/content/prefabs/muzzleflash_base.bundle",
+        "assets/content/weapons/additional_hands/client_assets.bundle",
+        "assets/content/weapons/animations/simple_animations.bundle",
+        "assets/content/weapons/animations/spirit_animations.bundle",
+        "assets/content/weapons/weapon_root_anim_fix.bundle",
+        "assets/content/audio/weapons/usable_items/item_medkit_grizzly.bundle"
+      ]
+   },
+   {
+      "key": "manimal/ai2_green_container.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle",
+        "assets/content/prefabs/muzzleflash_base.bundle",
+        "assets/content/weapons/additional_hands/client_assets.bundle",
+        "assets/content/weapons/animations/simple_animations.bundle",
+        "assets/content/weapons/animations/spirit_animations.bundle",
+        "assets/content/weapons/weapon_root_anim_fix.bundle",
+        "assets/content/audio/weapons/usable_items/item_medkit_grizzly.bundle"
+      ]
+   }
+ ]
+}

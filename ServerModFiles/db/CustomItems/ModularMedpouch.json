@@ -1,0 +1,77 @@
+{
+    "6d1a9c5e8f2b4d3a7c0e1f8b": {
+      "itemTplToClone": "5d235bb686f77443f4331278",
+      "parentId": "5795f317245977243854e041",
+      "handbookParentId": "5b5f6fd286f774093f2ecf0d",
+      "overrideProperties": {
+          "ExaminedByDefault": true,
+          "QuestItem": false,
+          "CanSellOnRagfair": true,
+          "Weight": 0.2,
+          "Width": 1,
+          "Height": 1,
+          "StackMaxSize": 1,
+          "BackgroundColor": "blue",
+          "Grids": [
+              {
+                  "_id": "8c1f2a3b4d5e6f7081920304",
+                  "_name": "1",
+                  "_parent": "6d1a9c5e8f2b4d3a7c0e1f8b",
+                  "_props": {
+                      "cellsH": 2,
+                      "cellsV": 2,
+                      "filters": [
+                          {
+                              "Filter": [
+                                  //bandage 
+								  "544fb25a4bdc2dfb738b4567",
+								  //army bandage
+                                  "5751a25924597722c463c472",
+								  //ai-2
+                                  "5755356824597772cb798962",
+								  //splint
+                                  "544fb3364bdc2d34748b456a",
+								  //alu splint
+								  "5af0454c86f7746bf20992e8",
+								  //esmarch
+								  "5e831507ea0a7c419c2f9bd9",
+								  //cat
+								  "60098af40accd37ef2175f27",
+								  //calok-b
+								  "5e8488fa988a8701445df1e4"
+                              ],
+                              "ExcludedFilter": []
+                          }
+                      ],
+                      "isSortingTable": false,
+                      "maxCount": 0,
+                      "maxWeight": 0,
+                      "minCount": 0
+                  },
+                  "_proto": "55d329c24bdc2d892f8b4567"
+              }
+          ]
+      },
+      "locales": {
+            "en": {
+                "name": "Modular Medpouch",
+                "shortName": "ModMedpouch",
+                "description": "A compact pouch with a 2x2 grid for medical supplies."
+            }
+        },
+      "addtoInventorySlots": [],
+      "addtoModSlots": false,
+      "modSlot": [],
+      "fleaPriceRoubles": 35000,
+      "handbookPriceRoubles": 35000,
+      "addtoBots": false,
+	  "addtoItemBlacklist": true,
+      "addtoStaticLootContainers": false,
+      "staticLootContainers": [],
+      "addLooseLoot": false,
+      "addLooseLootProbability": 0,
+      "addtoHallOfFame": false,
+      "hallOfFameSlots": [],
+      "addtoStatuetteSlots": false
+    }
+}

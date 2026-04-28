@@ -1,0 +1,31 @@
+{
+//adds the super ai-2 to therapist lvl3
+  "traderId": "54cb57776803fa99248b456e",
+  "items": [
+    {
+      "_id": "69efdff859db8685fc375ae7",
+      "_tpl": "7d1a9c5e8f2b4d3a7c0e1fa2",
+      "parentId": "hideout",
+      "slotId": "hideout",
+      "upd": {
+        "UnlimitedCount": true,
+        "StackObjectsCount": 9999999,
+        "BuyRestrictionMax": 0,
+        "BuyRestrictionCurrent": 0
+      }
+    }
+  ],
+  "barter_scheme": {
+    "69efdff859db8685fc375ae7": [
+      [
+        {
+          "count": 20000,
+          "_tpl": "5449016a4bdc2d6f028b456f"
+        }
+      ]
+    ]
+  },
+  "loyal_level_items": {
+    "69efdff859db8685fc375ae7": 3
+  }
+}
