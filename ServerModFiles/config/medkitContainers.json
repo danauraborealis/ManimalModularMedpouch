@@ -2,6 +2,9 @@
   // set uninstall to true and relaunch to drop the medkit conversion.
   "uninstall": false,
 
+  // bots get live med clones so they can heal. on death those clones swap back to filled containers.
+  "convertBotMedsOnDeath": true,
+
   // meds allowed inside any converted medkit. add/remove to taste.
   "filter": [
     "544fb25a4bdc2dfb738b4567", // bandage

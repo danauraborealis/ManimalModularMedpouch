@@ -30,6 +30,9 @@ namespace Manimal.ModularMedpouch
             var cfg = MedkitContainerConfig.Load();
             ContainerTpls = cfg.ContainerTpls(ModularMedpouchTpl);
             MedpouchHealChain.Configure(cfg.EffectPriority, cfg.EffectItems);
+            var botMedMap = BotMedkitMap.DerivedInverse(cfg);
+            foreach (var kv in BotMedkitMap.LoadInverse()) botMedMap[kv.Key] = kv.Value;
+            BotMedkitDeathConverter.Configure(cfg, botMedMap);
 
             var animMap = MedkitAnimationMap.Load();
             // build per-ID delay overrides from the medkits block. -1 sentinel means
@@ -48,6 +51,10 @@ namespace Manimal.ModularMedpouch
             new MedpouchHotkeyUsePatch().Enable();
             new PhantomMedShortCircuitPatch().Enable();
             new PhantomMedsMethod5Patch().Enable();
+            new BotMedkitDeathConvertPatch().Enable();
+            new CorpseMedkitConvertPatch().Enable();
+            new SearchPanelMedkitConvertPatch().Enable();
+            new GridItemViewMedkitConvertPatch().Enable();
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text.Json;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
@@ -24,6 +25,8 @@ public sealed class MedkitContainerConverter
     private readonly DatabaseService _databaseService;
     private readonly ISptLogger<MedkitContainerConverter> _logger;
     private readonly ICloner _cloner;
+
+    public static Dictionary<string, string> BotMedkitMap { get; private set; } = new(StringComparer.OrdinalIgnoreCase);
 
     public MedkitContainerConverter(
         DatabaseService databaseService,
@@ -51,6 +54,7 @@ public sealed class MedkitContainerConverter
 
         var items = _databaseService.GetItems();
         var animMap = new Dictionary<string, string>();
+        var botMedMap = new Dictionary<string, string>();
         foreach (var (tpl, entry) in config.Medkits)
         {
             if (!items.TryGetValue(tpl, out var template))
@@ -70,10 +74,21 @@ public sealed class MedkitContainerConverter
             var clone = _cloner.Clone(template);
             if (clone != null)
             {
-                var animTpl = new MongoId();
+                var animTpl = (MongoId)DerivedTpl(tpl, "anim");
                 clone.Id = animTpl;
                 items[animTpl] = clone;
                 animMap[tpl] = animTpl;
+            }
+
+            // separate live-bot clone. bot AI needs a real Med parent while alive.
+            // the client swaps this back to the searchable container on death.
+            var botClone = _cloner.Clone(template);
+            if (botClone != null)
+            {
+                var botTpl = (MongoId)DerivedTpl(tpl, "bot");
+                botClone.Id = botTpl;
+                items[botTpl] = botClone;
+                botMedMap[tpl] = botTpl;
             }
 
             var filterTpls = (entry.Filter is { Count: > 0 } ? entry.Filter : config.Filter);
@@ -91,6 +106,16 @@ public sealed class MedkitContainerConverter
         }
 
         WriteAnimationMap(animMap);
+        BotMedkitMap = new Dictionary<string, string>(botMedMap, StringComparer.OrdinalIgnoreCase);
+        WriteBotMedkitMap(botMedMap);
+    }
+
+    // deterministic clone IDs keep the client and server in sync across restarts.
+    private static string DerivedTpl(string tpl, string purpose)
+    {
+        var bytes = System.Text.Encoding.UTF8.GetBytes($"Manimal.ModularMedpouch.{purpose}.{tpl}");
+        var hash = SHA256.HashData(bytes);
+        return Convert.ToHexString(hash).Substring(0, 24).ToLowerInvariant();
     }
 
     // writes the original-ID -> phantom-anim-ID mapping next to the config so the client
@@ -111,6 +136,27 @@ public sealed class MedkitContainerConverter
         catch (Exception ex)
         {
             _logger.Warning($"[ModularMedpouch] failed to write animation map: {ex.Message}");
+        }
+    }
+
+    // writes original container ID -> live-bot med ID. the client uses the inverse map
+    // when a bot dies so the corpse has searchable medkits but the live bot had real meds.
+    private void WriteBotMedkitMap(Dictionary<string, string> map)
+    {
+        try
+        {
+            var modDir = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            if (modDir == null) return;
+            var dir = System.IO.Path.Combine(modDir, "config");
+            Directory.CreateDirectory(dir);
+            var path = System.IO.Path.Combine(dir, "botMedkitMap.json");
+            var json = JsonSerializer.Serialize(map, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(path, json);
+            _logger.Info($"[ModularMedpouch] wrote bot medkit map ({map.Count} entries) to {path}");
+        }
+        catch (Exception ex)
+        {
+            _logger.Warning($"[ModularMedpouch] failed to write bot medkit map: {ex.Message}");
         }
     }
 

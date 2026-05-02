@@ -9,6 +9,7 @@ namespace ModularMedpouchMod;
 public sealed record MedkitContainerConfig
 {
     [JsonPropertyName("uninstall")] public bool Uninstall { get; init; }
+    [JsonPropertyName("convertBotMedsOnDeath")] public bool ConvertBotMedsOnDeath { get; init; } = true;
     [JsonPropertyName("filter")]    public List<string> Filter { get; init; } = new();
     [JsonPropertyName("medkits")]   public Dictionary<string, MedkitContainerEntry> Medkits { get; init; } = new();
     [JsonPropertyName("loot")]      public LootFillSettings? Loot { get; init; }

@@ -12,6 +12,8 @@ namespace Manimal.ModularMedpouch
     internal sealed class MedkitContainerConfig
     {
         [JsonProperty("uninstall")] public bool Uninstall;
+        [JsonProperty("convertBotMedsOnDeath")] public bool ConvertBotMedsOnDeath = true;
+        [JsonProperty("filter")] public List<string> Filter = new List<string>();
 
         [JsonProperty("medkits")] public Dictionary<string, MedkitEntry> Medkits = new Dictionary<string, MedkitEntry>();
 
@@ -25,6 +27,7 @@ namespace Manimal.ModularMedpouch
         // seconds to play the medkit's vanilla unzip animation before cancelling it
         // and starting the heal chain. zero or negative disables the flourish.
         [JsonProperty("animationDelaySeconds")] public float AnimationDelaySeconds = 0.5f;
+        [JsonProperty("loot")] public LootFillSettings Loot = new LootFillSettings();
 
         internal sealed class MedkitEntry
         {
@@ -32,6 +35,24 @@ namespace Manimal.ModularMedpouch
             // optional per-medkit override for the unzip animation delay. negative = unset.
             // when unset, falls back to the top-level AnimationDelaySeconds.
             [JsonProperty("animationDelaySeconds")] public float AnimationDelaySeconds = -1f;
+        }
+
+        internal sealed class LootFillSettings
+        {
+            [JsonProperty("fill")] public bool Fill = true;
+            [JsonProperty("guaranteedTpl")] public string GuaranteedTpl = "5755356824597772cb798962";
+            [JsonProperty("fillItems")] public List<string> FillItems;
+            [JsonProperty("substitutions")] public Dictionary<string, string> Substitutions;
+            [JsonProperty("bossSubstitutions")] public Dictionary<string, string> BossSubstitutions;
+            [JsonProperty("followerSubstitutions")] public Dictionary<string, string> FollowerSubstitutions;
+            [JsonProperty("cultistSubstitutions")] public Dictionary<string, string> CultistSubstitutions;
+            [JsonProperty("pmcSubstitutions")] public Dictionary<string, string> PmcSubstitutions;
+            [JsonProperty("lootSubstitutions")] public Dictionary<string, string> LootSubstitutions;
+            [JsonProperty("bossSubstitutionChance")] public float BossSubstitutionChance = 1.0f;
+            [JsonProperty("followerSubstitutionChance")] public float FollowerSubstitutionChance = 1.0f;
+            [JsonProperty("pmcSubstitutionChance")] public float PmcSubstitutionChance = 0.5f;
+            [JsonProperty("cultistSubstitutionChance")] public float CultistSubstitutionChance = 0.6f;
+            [JsonProperty("lootSubstitutionChance")] public float LootSubstitutionChance = 0.3f;
         }
 #pragma warning restore 0649
 
@@ -57,7 +78,9 @@ namespace Manimal.ModularMedpouch
             var rootUp3 = Path.GetFullPath(Path.Combine(dir, "..", "..", ".."));
             var candidates = new[]
             {
-                Path.Combine(rootUp3, "SPT", "user", "mods", "ModularMedpouchServer", "config", "medkitContainers.json")
+                Path.Combine(rootUp3, "SPT", "user", "mods", "ModularMedpouchServer", "config", "medkitContainers.json"),
+                Path.Combine(rootUp3, "user", "mods", "ModularMedpouchServer", "config", "medkitContainers.json"),
+                Path.Combine(dir, "medkitContainers.json")
             };
 
             string chosen = null;

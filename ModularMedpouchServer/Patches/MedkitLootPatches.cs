@@ -19,6 +19,13 @@ internal static class BotMedkitFillPatch
     [HarmonyPostfix]
     static void Postfix(TemplateItem itemToAddTemplate, List<Item> itemToAddChildrenTo, bool isPmc, string botRole)
     {
+        if (MedkitLootFiller.TryGetBotAliveTpl(itemToAddTemplate.Id, out var botAliveTpl))
+        {
+            if (itemToAddChildrenTo == null || itemToAddChildrenTo.Count == 0) return;
+            itemToAddChildrenTo[0].Template = botAliveTpl;
+            return;
+        }
+
         if (!MedkitLootFiller.ShouldFill(itemToAddTemplate.Id)) return;
 
         // the parent is the root of itemToAddChildrenTo (no ParentId set, or matches the

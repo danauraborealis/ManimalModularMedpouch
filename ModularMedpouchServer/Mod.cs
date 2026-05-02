@@ -58,6 +58,7 @@ public class ModularMedpouchServer(
             if (!cfg.Uninstall)
             {
                 MedkitLootFiller.Configure(cfg);
+                MedkitLootFiller.ConfigureBotAliveTpls(MedkitContainerConverter.BotMedkitMap);
                 var harmony = new Harmony("com.Manimal.ModularMedpouch.lootfill");
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
                 logger.Info("[ModularMedpouch] loot fill patches applied");

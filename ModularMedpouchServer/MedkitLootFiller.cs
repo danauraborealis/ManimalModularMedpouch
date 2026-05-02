@@ -25,6 +25,8 @@ public static class MedkitLootFiller
 
     // ID -> grid dimensions, populated from config.medkits
     private static Dictionary<string, (int H, int V)> _gridDims = new();
+    private static Dictionary<string, string> _botAliveTpls = new();
+    private static bool _convertBotMedsOnDeath = true;
 
     // categories with distinct substitution behaviour. each has its own chance and an
     // optional override map; when the override is null, _defaultSubs is used.
@@ -60,6 +62,7 @@ public static class MedkitLootFiller
         _gridDims = cfg.Medkits.ToDictionary(
             kv => kv.Key,
             kv => (Math.Max(1, kv.Value.CellsH), Math.Max(1, kv.Value.CellsV)));
+        _convertBotMedsOnDeath = cfg.ConvertBotMedsOnDeath;
 
         var loot = cfg.Loot ?? new MedkitContainerConfig.LootFillSettings();
         _enabled = loot.Fill && !cfg.Uninstall;
@@ -81,6 +84,13 @@ public static class MedkitLootFiller
         _lootSubstitutionChance     = Math.Clamp(loot.LootSubstitutionChance,     0f, 1f);
     }
 
+    public static void ConfigureBotAliveTpls(Dictionary<string, string> botAliveTpls)
+    {
+        _botAliveTpls = botAliveTpls != null
+            ? new Dictionary<string, string>(botAliveTpls, StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>();
+    }
+
     private static Dictionary<string, string> ToCaseInsensitive(Dictionary<string, string>? src)
     {
         return src != null
@@ -90,9 +100,22 @@ public static class MedkitLootFiller
 
     // category for a bot role. cultist check runs first so sectantPriest goes there
     // even though it might also match boss-tier elsewhere in SPT.
+    //
+    // cross mod custom roles handled here too. adding explicit equality checks
+    // keeps the integration in the medpouch mod (which already owns the role
+    // categorization) rather than forcing each downstream mod to reach into our
+    // private data structures. Add new entries below when supporting more mods.
     public static Category CategoryForBotRole(string? botRole)
     {
         if (string.IsNullOrEmpty(botRole)) return Category.None;
+
+        // MitsuruMod Shadow Ops squad leader → MEGA AI-2 (boss tier),
+        // followers → Super AI-2 (follower tier). custom roles registered
+        // by the Mitsuru prepatch don't match the prefix-based checks
+        // below so they need explicit handling.
+        if (string.Equals(botRole, "shadowopsleader",   StringComparison.OrdinalIgnoreCase)) return Category.Boss;
+        if (string.Equals(botRole, "shadowopsfollower", StringComparison.OrdinalIgnoreCase)) return Category.Follower;
+
         if (botRole.StartsWith("sectant", StringComparison.OrdinalIgnoreCase))  return Category.Cultist;
         if (botRole.StartsWith("follower", StringComparison.OrdinalIgnoreCase)) return Category.Follower;
         if (botRole.StartsWith("boss", StringComparison.OrdinalIgnoreCase))     return Category.Boss;
@@ -117,6 +140,14 @@ public static class MedkitLootFiller
     public static bool ShouldFill(MongoId parentTpl)
     {
         return _enabled && _gridDims.ContainsKey(parentTpl);
+    }
+
+    public static bool TryGetBotAliveTpl(MongoId containerTpl, out string botAliveTpl)
+    {
+        botAliveTpl = null;
+        return _enabled
+            && _convertBotMedsOnDeath
+            && _botAliveTpls.TryGetValue(containerTpl, out botAliveTpl);
     }
 
     // build child items to drop into the parent medkits grid. all our med IDs are 1x1
