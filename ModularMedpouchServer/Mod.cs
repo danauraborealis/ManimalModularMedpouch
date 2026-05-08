@@ -30,6 +30,7 @@ public class ModularMedpouchServer(
     WTTServerCommonLib.WTTServerCommonLib wttCommon,
     DatabaseService databaseService,
     ICloner cloner,
+    IReadOnlyList<SPTarkov.Server.Core.Models.Spt.Mod.SptMod> installedMods,
     ISptLogger<ModularMedpouchServer> logger,
     ISptLogger<MedkitContainerConverter> converterLogger,
     ISptLogger<TraderAssortInjector> assortLogger) : IOnLoad
@@ -62,11 +63,62 @@ public class ModularMedpouchServer(
                 var harmony = new Harmony("com.Manimal.ModularMedpouch.lootfill");
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
                 logger.Info("[ModularMedpouch] loot fill patches applied");
+
+                // acid's progressive bot system bypasses vanilla BotLootGenerator entirely
+                // and uses its own CustomBotLootGenerator
+                TryPatchApbs(harmony);
             }
         }
         catch (Exception ex)
         {
             logger.Error($"[ModularMedpouch] medkit conversion / loot fill failed: {ex}");
+        }
+    }
+
+    private const string ApbsModGuid = "com.acidphantasm.progressivebotsystem";
+
+    private void TryPatchApbs(Harmony harmony)
+    {
+        try
+        {
+            // look up APBS via the SPT mod registry by its ModGuid
+            var apbsMod = installedMods.FirstOrDefault(m => m.ModMetadata?.ModGuid == ApbsModGuid);
+            if (apbsMod == null)
+            {
+                logger.Info("[ModularMedpouch] APBS not detected, skipping APBS bot loot patch");
+                return;
+            }
+
+            Type? apbsType = null;
+            foreach (var asm in apbsMod.Assemblies)
+            {
+                try { apbsType = asm.GetTypes().FirstOrDefault(t => t.Name == "CustomBotLootGenerator"); }
+                catch { /* type-load mismatch, skip */ }
+                if (apbsType != null) break;
+            }
+
+            if (apbsType == null)
+            {
+                logger.Warning($"[ModularMedpouch] APBS detected ({ApbsModGuid}) but CustomBotLootGenerator type not found; bot medkits may spawn empty");
+                return;
+            }
+
+            var apbsMethod = AccessTools.Method(apbsType, "AddRequiredChildItemsToParent");
+            if (apbsMethod == null)
+            {
+                logger.Warning("[ModularMedpouch] APBS detected but CustomBotLootGenerator.AddRequiredChildItemsToParent not found; bot medkits may spawn empty");
+                return;
+            }
+
+            // Postfix is a private static method on BotMedkitFillPatch; use a string lookup
+            // because nameof() needs accessible scope.
+            var ourPostfix = AccessTools.Method(typeof(Patches.BotMedkitFillPatch), "Postfix");
+            harmony.Patch(apbsMethod, postfix: new HarmonyMethod(ourPostfix));
+            logger.Info("[ModularMedpouch] APBS detected, patched CustomBotLootGenerator.AddRequiredChildItemsToParent");
+        }
+        catch (Exception ex)
+        {
+            logger.Warning($"[ModularMedpouch] APBS detection / patch failed: {ex.Message}");
         }
     }
 }
