@@ -5,7 +5,9 @@ using Manimal.ModularMedpouch.Patches;
 
 namespace Manimal.ModularMedpouch
 {
-    [BepInPlugin("Manimal.ModularMedpouch", "ModularMedpouch", "1.0.0")]
+    // GUID / Name / Version come from the auto-generated ModInfo class (built from
+    // Directory.Build.props). update Directory.Build.props to bump the version.
+    [BepInPlugin(ModInfo.Guid, ModInfo.ForgeName, ModInfo.Version)]
     [BepInDependency("com.wtt.commonlib")]
     public class Plugin : BaseUnityPlugin
     {

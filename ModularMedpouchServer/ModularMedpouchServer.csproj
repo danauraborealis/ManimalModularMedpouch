@@ -6,12 +6,11 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <RootNamespace>ModularMedpouchMod</RootNamespace>
     <AssemblyName>ModularMedpouchServer</AssemblyName>
-    <Version>1.0.0</Version>
-    <Authors>Manimal</Authors>
-    <Company>Manimal</Company>
-    <Product>ModularMedpouch</Product>
+    <Company>$(ModAuthor)</Company>
+    <Product>$(ModServerName)</Product>
     <Description>Server-side mod for ModularMedpouch</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <!-- Authors / Version / AssemblyVersion / FileVersion inherited from ../Directory.Build.props -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,7 +39,7 @@
   <Target Name="PackageModForDistribution" AfterTargets="Build">
     <PropertyGroup>
       <ModName>$(AssemblyName)</ModName>
-      <ZipFileName>$(ModName).zip</ZipFileName>
+      <ZipFileName>$(ModName)-$(ModVersion).zip</ZipFileName>
       <TempPackageDir>$(ProjectDir)obj\Package</TempPackageDir>
       <ModPackageDir>$(TempPackageDir)\SPT\user\mods\$(ModName)</ModPackageDir>
       <ServerModFilesDir>$(ProjectDir)..\ServerModFiles</ServerModFilesDir>
@@ -68,7 +67,7 @@
     <PropertyGroup>
       <SolutionDir>$(ProjectDir)..\</SolutionDir>
       <ClientProject>$(SolutionDir)ModularMedpouchClient\ModularMedpouchClient.csproj</ClientProject>
-      <CombinedZipPath>$(SolutionDir)ModularMedpouch.zip</CombinedZipPath>
+      <CombinedZipPath>$(SolutionDir)$(ModForgeName)-$(ModVersion).zip</CombinedZipPath>
       <CombinedTempDir>$(ProjectDir)obj\CombinedPackage</CombinedTempDir>
       <CombinedClientDir>$(CombinedTempDir)\BepInEx\plugins\ModularMedpouch</CombinedClientDir>
       <CombinedServerDir>$(CombinedTempDir)\SPT\user\mods\$(AssemblyName)</CombinedServerDir>

@@ -5,14 +5,11 @@
     <RootNamespace>Manimal.ModularMedpouch</RootNamespace>
     <AssemblyName>ModularMedpouchClient</AssemblyName>
     <Nullable>disable</Nullable>
-    <Authors>Manimal</Authors>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>$(AssemblyVersion)</FileVersion>
     <Configurations>Debug;Release</Configurations>
-    <Version>$(AssemblyVersion)</Version>
     <LangVersion>latest</LangVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <!-- Authors / Version / AssemblyVersion / FileVersion inherited from ../Directory.Build.props -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -99,7 +96,7 @@
   <Target Name="PackageModForDistribution" AfterTargets="Build">
     <PropertyGroup>
       <ModName>$(AssemblyName)</ModName>
-      <ZipFileName>$(ModName).zip</ZipFileName>
+      <ZipFileName>$(ModName)-$(ModVersion).zip</ZipFileName>
       <TempPackageDir>$(ProjectDir)obj\Package</TempPackageDir>
       <ModPackageDir>$(TempPackageDir)\BepInEx\plugins\ModularMedpouch</ModPackageDir>
     </PropertyGroup>
