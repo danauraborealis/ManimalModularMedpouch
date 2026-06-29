@@ -53,6 +53,7 @@ namespace Manimal.ModularMedpouch
             new MedpouchHotkeyUsePatch().Enable();
             new PhantomMedShortCircuitPatch().Enable();
             new PhantomMedsMethod5Patch().Enable();
+            new MedkitMaterialSwapPatch().Enable();
             new BotMedkitDeathConvertPatch().Enable();
             new CorpseMedkitConvertPatch().Enable();
             new SearchPanelMedkitConvertPatch().Enable();

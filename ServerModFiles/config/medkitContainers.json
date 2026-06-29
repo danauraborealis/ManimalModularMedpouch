@@ -29,7 +29,7 @@
   // per medkit filter override is optional. per medkit animationDelaySeconds is optional and
   // overrides the top-level default.
   "medkits": {
-    "544fb45d4bdc2dee738b4568": { "name": "salewa",  "cellsH": 3, "cellsV": 1, "animationDelaySeconds": 1 },
+    "544fb45d4bdc2dee738b4568": { "name": "salewa",  "cellsH": 4, "cellsV": 1, "animationDelaySeconds": 1 },
     "590c657e86f77412b013051d": { "name": "grizzly", "cellsH": 3, "cellsV": 3, "animationDelaySeconds": 1 },
     "590c661e86f7741e566b646a": { "name": "car",     "cellsH": 3, "cellsV": 1, "animationDelaySeconds": 1 },
     "590c678286f77426c9660122": { "name": "ifak",    "cellsH": 2, "cellsV": 2, "animationDelaySeconds": 1 },

@@ -13,7 +13,7 @@
 			  "rcid": ""
 		    },
 		    "UsePrefab": {
-			  "path": "manimal/ai2_blue_container.bundle",
+			  "path": "assets/content/weapons/usable_items/item_medkit/item_medkit_container.bundle",
 			  "rcid": ""
 		    }
         },

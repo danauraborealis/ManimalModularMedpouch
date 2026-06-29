@@ -10,7 +10,7 @@
       "upd": {
         "UnlimitedCount": true,
         "StackObjectsCount": 9999999,
-        "BuyRestrictionMax": 0,
+        "BuyRestrictionMax": 3,
         "BuyRestrictionCurrent": 0
       }
     }
