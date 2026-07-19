@@ -43,6 +43,16 @@
   // static + loose loot Super AI-2 (30%); regular scavs never substitute.
   "loot": {
     "fill": true,
+    // also fill medkits bought from traders (guaranteed ai-2 + random extras, no substitution).
+    "fillTraderPurchases": true,
+    // never put MEGA ai-2 in a trader-bought medkit.
+    "traderFillExcludePool": [
+      "69eff94e0842b5b5bbd1fd4d" //mega ai2
+    ],
+    // super ai-2 only rolls in trader-bought medkits at trader loyalty level 2+.
+    "traderFillMinLoyalty": {
+      "7d1a9c5e8f2b4d3a7c0e1fa2": 2 //super ai2
+    },
     "guaranteedTpl": "5755356824597772cb798962", //ai2
     "substitutions": {
       "5755356824597772cb798962": "7d1a9c5e8f2b4d3a7c0e1fa2" //super ai2

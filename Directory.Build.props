@@ -14,7 +14,7 @@
       ModGuid: must match across client + server + Forge upload, "com.username.modname"
   -->
   <PropertyGroup>
-    <ModVersion>1.0.4</ModVersion>
+    <ModVersion>1.0.5</ModVersion>
     <ModSptVersion>~4.0.13</ModSptVersion>
     <ModGuid>com.manimal.modularmedpouch</ModGuid>
     <ModAuthor>Manimal</ModAuthor>

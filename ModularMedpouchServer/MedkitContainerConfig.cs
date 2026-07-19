@@ -30,6 +30,16 @@ public sealed record MedkitContainerConfig
     public sealed record LootFillSettings
     {
         [JsonPropertyName("fill")]          public bool Fill { get; init; } = true;
+        // also fill medkits the player buys from traders (Therapist, Fence, etc). uses the
+        // same guaranteed + random pool as world loot, but never substitutes (no surprise
+        // Super/MEGA upgrade on the guaranteed slot). requires fill=true.
+        [JsonPropertyName("fillTraderPurchases")] public bool FillTraderPurchases { get; init; } = true;
+        // IDs that never appear as a random extra in a TRADER-bought medkit (world loot
+        // still uses them). e.g. keep MEGA AI-2 out of anything you can just buy.
+        [JsonPropertyName("traderFillExcludePool")] public List<string>? TraderFillExcludePool { get; init; }
+        // per-ID minimum trader loyalty level required for that ID to appear as a random
+        // extra in a trader-bought medkit. e.g. { superAI2: 2 } gates Super behind LL2.
+        [JsonPropertyName("traderFillMinLoyalty")]  public Dictionary<string, int>? TraderFillMinLoyalty { get; init; }
         // ID every loot medkit must contain at least once. defaults to AI-2.
         [JsonPropertyName("guaranteedTpl")] public string GuaranteedTpl { get; init; } = "5755356824597772cb798962";
         // pool of IDs eligible for random extras. null/empty -> use top-level Filter.

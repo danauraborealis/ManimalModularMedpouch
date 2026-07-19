@@ -27,6 +27,10 @@ public static class MedkitLootFiller
     private static Dictionary<string, (int H, int V)> _gridDims = new();
     private static Dictionary<string, string> _botAliveTpls = new();
     private static bool _convertBotMedsOnDeath = true;
+    private static bool _fillTraderPurchases = true;
+    // trader-purchase pool restrictions: IDs never inserted, and per-ID min loyalty gate.
+    private static HashSet<string> _traderFillExclude = new(StringComparer.OrdinalIgnoreCase);
+    private static Dictionary<string, int> _traderFillMinLoyalty = new(StringComparer.OrdinalIgnoreCase);
 
     // categories with distinct substitution behaviour. each has its own chance and an
     // optional override map; when the override is null, _defaultSubs is used.
@@ -66,6 +70,11 @@ public static class MedkitLootFiller
 
         var loot = cfg.Loot ?? new MedkitContainerConfig.LootFillSettings();
         _enabled = loot.Fill && !cfg.Uninstall;
+        _fillTraderPurchases = loot.FillTraderPurchases;
+        _traderFillExclude = new HashSet<string>(loot.TraderFillExcludePool ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
+        _traderFillMinLoyalty = loot.TraderFillMinLoyalty != null
+            ? new Dictionary<string, int>(loot.TraderFillMinLoyalty, StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         if (!string.IsNullOrWhiteSpace(loot.GuaranteedTpl)) _guaranteedTpl = loot.GuaranteedTpl;
         var pool = (loot.FillItems is { Count: > 0 } ? loot.FillItems : cfg.Filter) ?? new List<string>();
         // exclude the guaranteed ID from the random pool so it doesnt double-up cheaply
@@ -142,6 +151,12 @@ public static class MedkitLootFiller
         return _enabled && _gridDims.ContainsKey(parentTpl);
     }
 
+    // same as ShouldFill but also gated on the trader-purchase toggle.
+    public static bool ShouldFillTraderPurchase(MongoId parentTpl)
+    {
+        return _enabled && _fillTraderPurchases && _gridDims.ContainsKey(parentTpl);
+    }
+
     public static bool TryGetBotAliveTpl(MongoId containerTpl, out string botAliveTpl)
     {
         botAliveTpl = null;
@@ -156,6 +171,25 @@ public static class MedkitLootFiller
     // bosses can upgrade to MEGA AI-2 while their followers upgrade to Super AI-2.
     public static List<Item> BuildChildren(MongoId parentTpl, MongoId parentId, Category category = Category.None)
     {
+        return BuildChildrenCore(parentTpl, parentId, category, _fillPool);
+    }
+
+    // trader-purchase variant: same guaranteed + random fill, but the random pool is filtered
+    // by the configured exclusions and per-ID loyalty gates (e.g. MEGA never, Super only at
+    // LL2+). always Category.None so the guaranteed AI-2 is never upgraded by a buy.
+    public static List<Item> BuildTraderChildren(MongoId parentTpl, MongoId parentId, int loyaltyLevel)
+    {
+        var pool = _fillPool.Where(tpl =>
+            !_traderFillExclude.Contains(tpl)
+            && (!_traderFillMinLoyalty.TryGetValue(tpl, out var minLevel) || loyaltyLevel >= minLevel)
+        ).ToList();
+        return BuildChildrenCore(parentTpl, parentId, Category.None, pool);
+    }
+
+    // shared builder. `pool` is the set of IDs eligible for the random extra slots; the
+    // guaranteed slot always uses _guaranteedTpl regardless of pool.
+    private static List<Item> BuildChildrenCore(MongoId parentTpl, MongoId parentId, Category category, List<string> pool)
+    {
         if (!_gridDims.TryGetValue(parentTpl, out var dims)) return new List<Item>();
 
         int capacity = dims.H * dims.V;
@@ -164,13 +198,13 @@ public static class MedkitLootFiller
         var (substitutionChance, subs) = GetCategorySettings(category);
 
         // 1 guaranteed + 0..(capacity-1) random extras. floor of 1, ceiling of capacity.
-        int extras = _fillPool.Count == 0 ? 0 : Rng.Next(0, capacity); // [0, capacity-1] inclusive
+        int extras = pool.Count == 0 ? 0 : Rng.Next(0, capacity); // [0, capacity-1] inclusive
         int total = Math.Min(capacity, 1 + extras);
 
         var children = new List<Item>(total);
         for (int i = 0; i < total; i++)
         {
-            string tpl = i == 0 ? _guaranteedTpl : _fillPool[Rng.Next(_fillPool.Count)];
+            string tpl = i == 0 ? _guaranteedTpl : pool[Rng.Next(pool.Count)];
             if (substitutionChance > 0f
                 && subs.TryGetValue(tpl, out var swapped)
                 && Rng.NextDouble() < substitutionChance)
